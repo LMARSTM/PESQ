@@ -28,6 +28,8 @@ extensions = [
         "cypesq",
         ["pesq/cypesq.pyx", "pesq/dsp.c", "pesq/pesqdsp.c", "pesq/pesqmod.c"],
         include_dirs=['pesq'],
+        define_macros=[("Py_LIMITED_API", "0x030B0000")],
+        py_limited_api=True,
         language="c")
 ]
 setup(
@@ -42,8 +44,10 @@ setup(
     package_data={'pesq': ["*.pyx", "*.h", "dsp.c", "pesqdsp.c", "pesqmod.c"]},
     ext_package='pesq',
     ext_modules=extensions,
-    setup_requires=['setuptools>=18.0', 'cython', 'numpy'],
+    python_requires=">=3.11",
+    setup_requires=['setuptools>=18.0', 'cython>=3.1', 'numpy'],
     install_requires=['numpy'],
+    options={"bdist_wheel": {"py_limited_api": "cp311"}},
     classifiers=[
         "Programming Language :: Python",
         "License :: OSI Approved :: MIT License",
