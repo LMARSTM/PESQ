@@ -1,0 +1,63 @@
+name: Wheels
+
+on:
+  push:
+    branches: ["master"]
+    tags: ["*"]
+  pull_request:
+    branches: ["master"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: ${{ matrix.target }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: linux-x86_64
+            os: ubuntu-24.04
+            build: cp311-manylinux_x86_64
+            arch: x86_64
+          - target: linux-aarch64
+            os: ubuntu-24.04-arm
+            build: cp311-manylinux_aarch64
+            arch: aarch64
+          - target: windows-amd64
+            os: windows-2022
+            build: cp311-win_amd64
+            arch: AMD64
+          - target: windows-arm64
+            os: windows-11-arm
+            # Use native NumPy/SciPy wheels; setup.py still targets cp311-abi3.
+            build: cp313-win_arm64
+            arch: ARM64
+          - target: macos-arm64
+            os: macos-14
+            build: cp311-macosx_arm64
+            arch: arm64
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build and test wheel
+        uses: pypa/cibuildwheel@v4.3.5
+        env:
+          CIBW_BUILD: ${{ matrix.build }}
+          CIBW_ARCHS: ${{ matrix.arch }}
+          CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
+          CIBW_MANYLINUX_AARCH64_IMAGE: manylinux2014
+          CIBW_TEST_SOURCES: tests audio
+          CIBW_BEFORE_TEST: python -m pip install -r "{project}/tests/requirements.txt"
+          CIBW_TEST_COMMAND: python -m pytest tests -q
+
+      - name: Upload wheel
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheels-${{ matrix.target }}
+          path: wheelhouse/*.whl
+          if-no-files-found: error

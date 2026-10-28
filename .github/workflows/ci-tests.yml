@@ -17,11 +17,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+        python-version: ["3.11", "3.12", "3.13"]
         numpy-version: ["numpy<2.0", "numpy>=2.0"]
         exclude:
-          - python-version: "3.9"
-            numpy-version: "numpy>=2.0"
+          - python-version: "3.13"
+            numpy-version: "numpy<2.0"
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
@@ -31,7 +31,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-            pip install "${{ matrix.numpy-version }}" cython
+            pip install "${{ matrix.numpy-version }}" "cython>=3.1"
             pip install -e . -r tests/requirements.txt
 
       - name: Run tests
