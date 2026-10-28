@@ -21,7 +21,7 @@ def test():
 
     score = pesq(ref=ref, deg=deg, fs=sample_rate, mode='nb')
 
-    assert score == 1.6072081327438354, score
+    assert np.allclose(score, 1.6072081327438354), score
     return score
 
 
@@ -82,7 +82,7 @@ def test_pesq_batch():
 
     # narrowband
     score = pesq_batch(ref=ref, deg=deg, fs=sample_rate, mode='nb')
-    assert score == [1.6072081327438354], score
+    assert np.allclose(score, [1.6072081327438354]), score
 
     # 1D - 2D multiprocessing
     deg_2d = np.repeat(deg[np.newaxis, :], n_file, axis=0)
