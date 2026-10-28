@@ -52,7 +52,9 @@ jobs:
           CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
           CIBW_MANYLINUX_AARCH64_IMAGE: manylinux2014
           CIBW_TEST_SOURCES: tests audio
-          CIBW_BEFORE_TEST: python -m pip install -r "{project}/tests/requirements.txt"
+          # Select compatible wheels instead of compiling SciPy on older glibc.
+          CIBW_BEFORE_TEST: >-
+            python -m pip install --only-binary=:all: -r "{project}/tests/requirements.txt"
           CIBW_TEST_COMMAND: python -m pytest tests -q
 
       - name: Upload wheel
