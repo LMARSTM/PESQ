@@ -37,10 +37,10 @@ jobs:
             # Use native NumPy/SciPy wheels; setup.py still targets cp311-abi3.
             build: cp313-win_arm64
             arch: ARM64
-          - target: macos-arm64
-            os: macos-14
-            build: cp311-macosx_arm64
-            arch: arm64
+          # - target: macos-arm64
+          #   os: macos-14
+          #   build: cp311-macosx_arm64
+          #   arch: arm64
     steps:
       - uses: actions/checkout@v4
 
